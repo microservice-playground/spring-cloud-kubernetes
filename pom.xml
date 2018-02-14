@@ -1,29 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>spring-cloud-kubernetes-examples</artifactId>
-		<groupId>org.springframework.cloud</groupId>
-		<version>0.2.1.BUILD-SNAPSHOT</version>
-	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.springframework.cloud</groupId>
-	<artifactId>kubernetes-hello-world</artifactId>
-	<name>Spring Cloud Kubernetes :: Examples :: Hello World</name>
-	<description>A simple example that demonstrates how to build and test a basic spring
-		cloud kubernetes app
+	<groupId>com.microservice.playground</groupId>
+	<artifactId>spring-cloud-kubernetes</artifactId>
+	<name>Spring Microservice Playground - Kubernetes</name>
+	<description>
+		Experimenting with spring-cloud-kubernetes
 	</description>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>${spring.boot.version}</version>
+		<relativePath/>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<spring.boot.version>2.0.0.RC1</spring.boot.version>
+		<spring.cloud.version>Finchley.M6</spring.cloud.version>
+		<spring.kuber.version>0.2.0.RELEASE</spring.kuber.version>
+		<maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+		<maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+		<maven.fabric8.plugin.version>3.5.34</maven.fabric8.plugin.version>
+		<maven.failsafe.plugin.version>2.20.1</maven.failsafe.plugin.version>
+		<org.arquillian.cube.version>1.15.0</org.arquillian.cube.version>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring.cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-				<version>${spring-boot.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -32,7 +50,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-kubernetes-core</artifactId>
-			<version>${project.version}</version>
+			<version>${spring.kuber.version}</version>
 		</dependency>
 
 		<dependency>
@@ -45,11 +63,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!--
-			We need that(actuator) so that it can be used in readiness probes.
-			Readiness checks are needed by arquillian, so that it
-			knows when to run the actual test.
-		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -59,32 +72,73 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.junit</groupId>
 			<artifactId>arquillian-junit-standalone</artifactId>
+			<version>1.3.0.Final</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.arquillian.cube</groupId>
 			<artifactId>arquillian-cube-requirement</artifactId>
+			<version>${org.arquillian.cube.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.arquillian.cube</groupId>
 			<artifactId>arquillian-cube-kubernetes</artifactId>
+			<version>${org.arquillian.cube.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.arquillian.cube</groupId>
 			<artifactId>arquillian-cube-openshift</artifactId>
+			<version>${org.arquillian.cube.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
+				<version>${spring.boot.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -98,7 +152,7 @@
 				<!--skip deploy -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>${maven-deploy-plugin.version}</version>
+				<version>${maven.deploy.plugin.version}</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -106,7 +160,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven-surefire-plugin.version}</version>
+				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
@@ -114,7 +168,7 @@
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>fabric8-maven-plugin</artifactId>
-				<version>${fabric8.maven.plugin.version}</version>
+				<version>${maven.fabric8.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>fmp</id>
@@ -135,7 +189,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>fabric8-maven-plugin</artifactId>
-						<version>${fabric8.maven.plugin.version}</version>
+						<version>${maven.fabric8.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>fmp</id>
@@ -165,7 +219,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>fabric8-maven-plugin</artifactId>
-						<version>${fabric8.maven.plugin.version}</version>
+						<version>${maven.fabric8.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>fmp</id>
@@ -187,7 +241,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>fabric8-maven-plugin</artifactId>
-						<version>${fabric8.maven.plugin.version}</version>
+						<version>${maven.fabric8.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>fmp</id>
@@ -201,7 +255,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>${maven-failsafe-plugin.version}</version>
+						<version>${maven.failsafe.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>run-integration-tests</id>
